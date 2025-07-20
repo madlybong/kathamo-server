@@ -1,13 +1,8 @@
-import { RouteHandler } from "../../types";
+import { AppConfig, Route } from "../../types";
 import { handleAuthRoutes } from "./auth";
 import { handleUserRoutes } from "./users";
 import { handleContentRoutes } from "./content";
-
-interface Route {
-  path: RegExp;
-  method: string;
-  handler: RouteHandler;
-}
+import { Database } from "../db";
 
 const routes: Route[] = [
   // Authentication routes
@@ -35,12 +30,16 @@ const routes: Route[] = [
   },
 ];
 
-export async function apiRouter(req: Request): Promise<Response> {
+export async function apiRouter(
+  req: Request,
+  db: Database,
+  config: AppConfig
+): Promise<Response> {
   const url = new URL(req.url);
 
   for (const route of routes) {
     if (route.path.test(url.pathname) && route.method === req.method) {
-      return await route.handler(req);
+      return await route.handler(req, db, config);
     }
   }
 

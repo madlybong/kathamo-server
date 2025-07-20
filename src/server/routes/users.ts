@@ -1,16 +1,29 @@
-import { RouteHandler } from "../../types";
+import { AppConfig } from "../../types";
+import { Database } from "../db";
+import { UserService } from "../db/userService";
 
-export async function handleUserRoutes(req: Request): Promise<Response> {
+export async function handleUserRoutes(
+  req: Request,
+  db: Database,
+  config: AppConfig
+): Promise<Response> {
   const url = new URL(req.url);
   const headers = { "Content-Type": "application/json" };
+  const userService = new UserService(db);
 
   const userIdMatch = url.pathname.match(/^\/api\/users\/(\d+)$/);
   if (req.method === "GET" && userIdMatch) {
-    const userId = userIdMatch[1];
-    // Placeholder: Fetch user from database
+    const userId = parseInt(userIdMatch[1]);
+    const user = await userService.findUserById(userId);
+    if (user) {
+      return new Response(
+        JSON.stringify({ message: `User ${userId} found`, user }),
+        { status: 200, headers }
+      );
+    }
     return new Response(
-      JSON.stringify({ message: `User ${userId} found`, userId }),
-      { status: 200, headers }
+      JSON.stringify({ message: `User ${userId} not found` }),
+      { status: 404, headers }
     );
   }
 

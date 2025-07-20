@@ -1,65 +1,3 @@
-<script setup lang="ts">
-import { useAppStore } from '../stores/appStore';
-
-const appStore = useAppStore();
-
-async function fetchHello() {
-    try {
-        const response = await fetch('/api/hello');
-        const data = await response.json();
-        appStore.setRestMessage(data.message);
-    } catch (error) {
-        appStore.setRestMessage('Error fetching REST data');
-    }
-}
-
-async function fetchLogin() {
-    try {
-        const response = await fetch('/api/auth/login', { method: 'POST' });
-        const data = await response.json();
-        appStore.setRestMessage(data.message);
-    } catch (error) {
-        appStore.setRestMessage('Error fetching login data');
-    }
-}
-
-async function fetchUser() {
-    try {
-        const response = await fetch('/api/users/1');
-        const data = await response.json();
-        appStore.setRestMessage(data.message);
-    } catch (error) {
-        appStore.setRestMessage('Error fetching user data');
-    }
-}
-
-async function fetchContent() {
-    try {
-        const response = await fetch('/api/content/1');
-        const data = await response.json();
-        appStore.setRestMessage(data.message);
-    } catch (error) {
-        appStore.setRestMessage('Error fetching content data');
-    }
-}
-
-async function connectWebSocket() {
-    try {
-        const ws = new WebSocket('ws://' + window.location.host + '/ws');
-        ws.onmessage = (event) => {
-            appStore.setWsMessage(event.data);
-        };
-        ws.onopen = () => {
-            ws.send('Hello from client!');
-        };
-        ws.onerror = () => {
-            appStore.setWsMessage('WebSocket error');
-        };
-    } catch (error) {
-        appStore.setWsMessage('Error connecting to WebSocket');
-    }
-}
-</script>
 <template>
     <div class="bg-white p-6 rounded-lg shadow-md">
         <h1 class="text-2xl font-bold mb-4">Home</h1>
@@ -82,3 +20,66 @@ async function connectWebSocket() {
         </button>
     </div>
 </template>
+
+<script setup lang="ts">
+import { useAppStore } from '../stores/appStore';
+
+const appStore = useAppStore();
+
+async function fetchHello() {
+    try {
+        const response = await fetch('/api/hello');
+        const data = await response.json();
+        appStore.setRestMessage(data.message);
+    } catch (error) {
+        appStore.setRestMessage('Error fetching REST data');
+    }
+}
+
+async function fetchLogin() {
+    try {
+        const response = await fetch('/api/auth/login', { method: 'POST' });
+        const data = await response.json();
+        appStore.setRestMessage(`${data.message}: ${JSON.stringify(data.user)}`);
+    } catch (error) {
+        appStore.setRestMessage('Error fetching login data');
+    }
+}
+
+async function fetchUser() {
+    try {
+        const response = await fetch('/api/users/1');
+        const data = await response.json();
+        appStore.setRestMessage(`${data.message}: ${JSON.stringify(data.user || {})}`);
+    } catch (error) {
+        appStore.setRestMessage('Error fetching user data');
+    }
+}
+
+async function fetchContent() {
+    try {
+        const response = await fetch('/api/content/1');
+        const data = await response.json();
+        appStore.setRestMessage(`${data.message}: ${JSON.stringify(data.content || {})}`);
+    } catch (error) {
+        appStore.setRestMessage('Error fetching content data');
+    }
+}
+
+async function connectWebSocket() {
+    try {
+        const ws = new WebSocket('ws://' + window.location.host + '/ws');
+        ws.onmessage = (event) => {
+            appStore.setWsMessage(event.data);
+        };
+        ws.onopen = () => {
+            ws.send('Hello from client!');
+        };
+        ws.onerror = () => {
+            appStore.setWsMessage('WebSocket error');
+        };
+    } catch (error) {
+        appStore.setWsMessage('Error connecting to WebSocket');
+    }
+}
+</script>
