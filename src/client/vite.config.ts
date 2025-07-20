@@ -28,7 +28,16 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "../../dist/client", // Output to dist/client
+    outDir: "../../dist/client",
     emptyOutDir: true,
+    minify: "esbuild", // Enable minification
+    cssMinify: true, // Minify CSS
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["vue", "vue-router", "pinia"], // Split vendor code
+        },
+      },
+    },
   },
 });
