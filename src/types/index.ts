@@ -21,9 +21,20 @@ export interface Route {
 }
 
 export interface User {
-  id: number;
-  username: string;
+  id: string;
+  firstname: string;
+  lastname: string;
+  mobile: string;
   email: string;
+  username: string;
+  password: string;
+  date_created: string;
+  date_updated: string;
+  last_seen: string;
+  verification_token: string;
+  permanent_access_token: string;
+  status: string;
+  [key: string]: any; // Allow for dynamic columns
 }
 
 export interface Content {
